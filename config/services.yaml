@@ -1,0 +1,5 @@
+services:
+  HeimrichHannot\LoginRegistrationBundle\:
+    resource: '../src/{Controller,Proxy}/*'
+    autoconfigure: true
+    autowire: true

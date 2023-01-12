@@ -1,0 +1,22 @@
+
+{
+  "name": "heimrichhannot/contao-login-registration-bundle",
+  "type": "contao-bundle",
+  "description": "A frontend module that allows login and registration in one module.",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": "^8.0",
+    "contao/core-bundle": "^4.13",
+    "symfony/http-foundation": "^5.4",
+    "symfony/http-kernel": "^5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "HeimrichHannot\\LoginRegistrationBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao-manager-plugin": "HeimrichHannot\\LoginRegistrationBundle\\ContaoManager\\Plugin",
+    "foxy": true
+  }
+}
