@@ -84,13 +84,11 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         }
 
         $registrationModuleModel = new ModuleModel();
-        $registrationModuleModel->reg_allowLogin = $moduleModel->reg_allowLogin;
-        $registrationModuleModel->reg_groups = $moduleModel->reg_groups;
-        $registrationModuleModel->reg_assignDir = $moduleModel->reg_assignDir;
-        $registrationModuleModel->reg_homeDir = $moduleModel->reg_homeDir;
+        $registrationModuleModel->setRow($moduleModel->row());
+        $registrationModuleModel->id = 0;
+        $registrationModuleModel->type = 'registration';
         $registrationModule = new RegistrationProxy($registrationModuleModel);
-
-
+        
         throw $userNotFoundException;
     }
 }
