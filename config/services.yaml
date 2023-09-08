@@ -1,5 +1,11 @@
 services:
   HeimrichHannot\LoginRegistrationBundle\:
-    resource: '../src/{Controller,Proxy}/*'
+    resource: '../src/{EventListener,Proxy}/*'
     autoconfigure: true
     autowire: true
+
+  HeimrichHannot\LoginRegistrationBundle\Security\User\ContaoUserProviderDecorator:
+    decorates: 'contao.security.frontend_user_provider'
+    autowire: true
+    bind:
+      $contaoUserProvider: '@.inner'
