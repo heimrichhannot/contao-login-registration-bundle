@@ -7,6 +7,7 @@
   "require": {
     "php": "^8.0",
     "contao/core-bundle": "^4.13 || ^5.0",
+    "symfony/event-dispatcher-contracts": "^1.0 || ^2.0 || ^3.0",
     "symfony/http-foundation": "^5.4",
     "symfony/http-kernel": "^5.4"
   },
@@ -16,7 +17,6 @@
     }
   },
   "extra": {
-    "contao-manager-plugin": "HeimrichHannot\\LoginRegistrationBundle\\ContaoManager\\Plugin",
-    "foxy": true
+    "contao-manager-plugin": "HeimrichHannot\\LoginRegistrationBundle\\ContaoManager\\Plugin"
   }
 }
