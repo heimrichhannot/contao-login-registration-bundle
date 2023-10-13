@@ -2,12 +2,10 @@
 
 namespace HeimrichHannot\LoginRegistrationBundle\Proxy;
 
-use Contao\Controller;
 use Contao\Input;
 use Contao\MemberModel;
 use Contao\ModuleModel;
 use Contao\ModuleRegistration;
-use Contao\System;
 use Contao\Validator;
 use HeimrichHannot\LoginRegistrationBundle\Event\PrepareNewMemberDataEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
