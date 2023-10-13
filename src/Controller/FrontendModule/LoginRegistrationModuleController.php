@@ -14,6 +14,7 @@ class LoginRegistrationModuleController extends ModuleLogin
 {
     public const TYPE = 'login_registration';
 
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct(
         private EventDispatcherInterface $eventDispatcher
     ){}

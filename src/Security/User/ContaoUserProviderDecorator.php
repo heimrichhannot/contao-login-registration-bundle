@@ -3,19 +3,12 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Security\User;
 
 use Contao\Controller;
-use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\User\ContaoUserProvider;
-use Contao\Date;
-use Contao\Encryption;
-use Contao\FormPassword;
 use Contao\FrontendTemplate;
-use Contao\FrontendUser;
 use Contao\Input;
 use Contao\ModuleModel;
-use Contao\System;
 use Contao\User;
-use Exception;
 use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
