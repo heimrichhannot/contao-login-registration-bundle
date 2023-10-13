@@ -16,6 +16,7 @@ use Contao\ModuleModel;
 use Contao\System;
 use Contao\User;
 use Exception;
+use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -100,7 +101,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         }
 
         $moduleModel = ModuleModel::findByPk((int)$moduleId);
-        if (!$moduleModel || 'login' !== $moduleModel->type || !$moduleModel->allowDirectRegistration) {
+        if (!$moduleModel || LoginRegistrationModuleController::TYPE !== $moduleModel->type) {
             throw $userNotFoundException;
         }
 
