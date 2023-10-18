@@ -1,7 +1,5 @@
 # Contao Login Registration Bundle
 
-> This bundle is currently under development and not ready for production use!
-
 This bundle provide a login frontend module allowing direct register the user if user not exist.
 
 ## Usage
@@ -22,7 +20,7 @@ Update the database.
 2. Add the module to a page.
 3. For ease of usage, it is recommended to only allow email addresses as username. 
    You could adjust your dca accordingly or use a bundle to provide such functionality. 
-   Otherwise you need to implement a listener for `PrepareNewMemberDataEvent` to provide a user email address.
+   Otherwise, you need to implement a listener for `PrepareNewMemberDataEvent` to provide a user email address.
 
 ## Developers
 
@@ -31,7 +29,7 @@ Update the database.
 | Event                     | Description                                                                      |
 |---------------------------|----------------------------------------------------------------------------------|
 | AdjustUsernameEvent       | Manipulate the username before checking for existing user or creating a new one. |
-| PrepareNewMemberDataEvent | Adjust the new member data before the user is created.                           |
+| PrepareNewMemberDataEvent | Adjust the new member data before the member is created.                         |
 
 
 

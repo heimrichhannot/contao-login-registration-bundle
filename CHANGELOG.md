@@ -2,4 +2,5 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2023-01-12
+## [0.1.0] - 2023-10-17
+Initial release
