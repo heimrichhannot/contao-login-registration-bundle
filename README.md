@@ -2,6 +2,8 @@
 
 This bundle provide a login frontend module allowing direct register the user if user not exist.
 
+![Screenshot](docs/img/screenshot.png)
+
 ## Usage
 
 ### Install
