@@ -35,7 +35,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
     public function __call(string $name, array $arguments)
     {
         if (method_exists($this->contaoUserProvider, $name)) {
-            call_user_func([$this->contaoUserProvider, $name], $arguments);
+            call_user_func([$this->contaoUserProvider, $name], ...$arguments);
         }
 
         $class = self::class;
