@@ -32,6 +32,4 @@ Update the database.
 |---------------------------|----------------------------------------------------------------------------------|
 | AdjustUsernameEvent       | Manipulate the username before checking for existing user or creating a new one. |
 | PrepareNewMemberDataEvent | Adjust the new member data before the member is created.                         |
-
-
-
+| BeforeParseModuleEvent    | Manipulate the template data before rendering the frontend module.               |

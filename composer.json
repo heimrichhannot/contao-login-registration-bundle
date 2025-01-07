@@ -4,7 +4,7 @@
   "description": "A frontend module that allows login and registration in one module.",
   "license": "GPL-3.0-or-later",
   "require": {
-    "php": "^8.0",
+    "php": "^8.1",
     "contao/core-bundle": "^4.13 || ^5.0",
     "symfony/event-dispatcher-contracts": "^1.0 || ^2.0 || ^3.0",
     "symfony/http-foundation": "^5.4 || ^6.0",
