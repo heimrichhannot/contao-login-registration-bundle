@@ -8,6 +8,7 @@ use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use HeimrichHannot\LoginRegistrationBundle\HeimrichHannotLoginRegistrationBundle;
+use HeimrichHannot\MemberBundle\HeimrichHannotContaoMemberBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
 class Plugin implements BundlePluginInterface, ConfigPluginInterface
@@ -17,7 +18,10 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
     {
         return [
             BundleConfig::create(HeimrichHannotLoginRegistrationBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class])
+                ->setLoadAfter([
+                    ContaoCoreBundle::class,
+                    HeimrichHannotContaoMemberBundle::class,
+                ])
         ];
     }
 
