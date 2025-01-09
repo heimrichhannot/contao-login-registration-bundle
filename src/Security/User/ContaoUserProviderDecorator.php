@@ -60,8 +60,6 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
     {
         $event = $this->eventDispatcher->dispatch(new AdjustUsernameEvent($username));
 
-//        return $this->contaoUserProvider->loadUserByUsername($event->getUsername());
-
         try {
             $user = $this->contaoUserProvider->loadUserByUsername($event->getUsername());
         } catch (UserNotFoundException|UsernameNotFoundException $exception) {
@@ -118,20 +116,16 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         Controller::loadLanguageFile('default');
         Controller::loadDataContainer('tl_member');
 
-        $registrationModuleModel = new ModuleModel();
-        $registrationModuleModel->setRow($moduleModel->row());
-        $registrationModuleModel->type = 'registration';
-        $registrationModuleModel->editable = ['username', 'password'];
-        $registrationModuleModel->disableCaptcha = '1';
-        $registrationModuleModel->reg_activate = false;
-        $registrationModule = new RegistrationProxy($registrationModuleModel, $this->eventDispatcher);
+        $registrationModule = RegistrationProxy::createInstance(
+            $moduleModel->row(),
+            $this->eventDispatcher
+        );
         $registrationModule->Template = new FrontendTemplate();
 
         try {
             $registrationModule->runCompile();
         } catch (ResponseException $e) {
         }
-
 
         $user = $this->loadUserByIdentifier($identifier);
 

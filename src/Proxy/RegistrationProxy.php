@@ -44,14 +44,6 @@ class RegistrationProxy extends ModuleRegistration
 
     public function checkActivation(): bool
     {
-        $strFormId = 'tl_login_' . $this->id;
-
-        // Remove expired registration (#3709)
-        if (Input::post('FORM_SUBMIT') == $strFormId && ($email = Input::post('email')) && ($member = MemberModel::findExpiredRegistrationByEmail($email)))
-        {
-            $member->delete();
-        }
-
         // Activate account
         if (strncmp(Input::get('token'), 'reg-', 4) === 0)
         {
@@ -60,11 +52,6 @@ class RegistrationProxy extends ModuleRegistration
         }
 
         return false;
-    }
-
-    public function doSendActivationMail(array $data)
-    {
-        $this->sendActivationMail($data);
     }
 
     public static function createInstance(array $data, EventDispatcherInterface $eventDispatcher): self
