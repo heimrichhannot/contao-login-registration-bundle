@@ -14,7 +14,6 @@ class BeforeParseModuleEvent extends Event
         public readonly ModuleModel $model,
         public readonly Request $request,
         public readonly ?\Exception $exception = null,
-    )
-    {
+    ) {
     }
 }

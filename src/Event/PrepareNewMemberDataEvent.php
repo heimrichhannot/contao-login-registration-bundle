@@ -8,10 +8,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 class PrepareNewMemberDataEvent extends Event
 {
     public function __construct(
-        private array       $memberData,
+        private array $memberData,
         private readonly ModuleModel $moduleModel,
-    )
-    {
+    ) {
     }
 
     public function getMemberData(): array

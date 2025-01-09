@@ -13,18 +13,17 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class Plugin implements BundlePluginInterface, ConfigPluginInterface
 {
-
     public function getBundles(ParserInterface $parser): array
     {
         return [
             BundleConfig::create(HeimrichHannotLoginRegistrationBundle::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
-                    /**
+                    /*
                      * @phpstan-ignore class.notFound
                      */
                     HeimrichHannotContaoMemberBundle::class,
-                ])
+                ]),
         ];
     }
 

@@ -22,14 +22,16 @@ class LoginRegistrationModuleController extends ModuleLogin
 {
     public const TYPE = 'login_registration';
 
-    /** @noinspection PhpMissingParentConstructorInspection */
+    /**
+     * @noinspection PhpMissingParentConstructorInspection
+     */
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly AuthenticationUtils      $authUtils,
-        private readonly RequestStack             $requestStack,
-        private readonly RegistrationUtils        $registrationUtils,
-
-    ){}
+        private readonly AuthenticationUtils $authUtils,
+        private readonly RequestStack $requestStack,
+        private readonly RegistrationUtils $registrationUtils,
+    ) {
+    }
 
     public function __invoke(ModuleModel $model, string $section): Response
     {
@@ -49,8 +51,7 @@ class LoginRegistrationModuleController extends ModuleLogin
 
         // Only call the authentication utils if there is an active session to prevent starting an empty session
         $exception = null;
-        if ($request && $request->hasSession() && ($request->hasPreviousSession() || $request->getSession()->isStarted()))
-        {
+        if ($request && $request->hasSession() && ($request->hasPreviousSession() || $request->getSession()->isStarted())) {
             $exception = $this->authUtils->getLastAuthenticationError(false);
         }
 
@@ -66,11 +67,6 @@ class LoginRegistrationModuleController extends ModuleLogin
         ));
     }
 
-    /**
-     * @param AuthenticationException|null $exception
-     * @param RegistrationProxy $registration
-     * @return void
-     */
     private function checkRegistration(?AuthenticationException $exception, RegistrationProxy $registration): void
     {
         if (!$exception instanceof DisabledException) {
@@ -88,13 +84,12 @@ class LoginRegistrationModuleController extends ModuleLogin
             return;
         }
 
-        /**
+        /*
          * Check whether there is a jumpTo page
          *
          * @phpstan-ignore instanceof.alwaysFalse
          */
-        if (($objJumpTo = $this->objModel->getRelated('reg_activate_jumpTo')) instanceof PageModel)
-        {
+        if (($objJumpTo = $this->objModel->getRelated('reg_activate_jumpTo')) instanceof PageModel) {
             $this->jumpToOrReload($objJumpTo->row());
         }
 

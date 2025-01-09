@@ -17,7 +17,6 @@ use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -25,15 +24,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgraderInterface
 {
-
     public function __construct(
         private readonly ContaoUserProvider $contaoUserProvider,
         private readonly RequestStack $requestStack,
         private readonly ContaoFramework $framework,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly RegistrationUtils $registrationUtils,
-    )
-    {
+    ) {
     }
 
     public function __call(string $name, array $arguments)
@@ -78,6 +75,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         } catch (UserNotFoundException|UsernameNotFoundException) {
             return $this->applyDirectRegistration($event->getUsername());
         }
+
         return $user;
     }
 
@@ -97,7 +95,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
             throw $userNotFoundException;
         }
 
-        $moduleModel = ModuleModel::findByPk((int)$moduleId);
+        $moduleModel = ModuleModel::findByPk((int) $moduleId);
         if (!$moduleModel || LoginRegistrationModuleController::TYPE !== $moduleModel->type) {
             throw $userNotFoundException;
         }

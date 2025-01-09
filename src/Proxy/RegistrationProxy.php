@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpMissingParentConstructorInspection */
+<?php
+
+/** @noinspection PhpMissingParentConstructorInspection */
 
 namespace HeimrichHannot\LoginRegistrationBundle\Proxy;
 
@@ -14,10 +16,9 @@ class RegistrationProxy extends ModuleRegistration
     public const LAST_REGISTRATION = '_security.huh_login_registration.last_registration';
 
     public function __construct(
-        private readonly ModuleModel  $moduleModel,
+        private readonly ModuleModel $moduleModel,
         private readonly EventDispatcherInterface $eventDispatcher,
-    )
-    {
+    ) {
         parent::__construct($moduleModel);
     }
 
@@ -37,16 +38,17 @@ class RegistrationProxy extends ModuleRegistration
         parent::createNewUser($event->getMemberData());
     }
 
-    public function runCompile(): void {
+    public function runCompile(): void
+    {
         parent::compile();
     }
 
     public function checkActivation(): bool
     {
         // Activate account
-        if (str_starts_with(Input::get('token'), 'reg-'))
-        {
+        if (str_starts_with(Input::get('token'), 'reg-')) {
             $this->activateAcount();
+
             return true;
         }
 
@@ -62,6 +64,7 @@ class RegistrationProxy extends ModuleRegistration
         $registrationModuleModel->type = 'registration';
         $registrationModuleModel->editable = ['username', 'password'];
         $registrationModuleModel->disableCaptcha = '1';
+
         return new RegistrationProxy($registrationModuleModel, $eventDispatcher);
     }
 }
