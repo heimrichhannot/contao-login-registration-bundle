@@ -5,7 +5,7 @@ namespace HeimrichHannot\LoginRegistrationBundle\EventListener\Contao;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Widget;
 
-#[AsHook("parseWidget")]
+#[AsHook('parseWidget')]
 class ParseWidgetListener
 {
     /**
@@ -20,7 +20,7 @@ class ParseWidgetListener
         return $buffer;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->widgets = [];
     }

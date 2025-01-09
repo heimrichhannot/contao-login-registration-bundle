@@ -46,7 +46,7 @@ class RegistrationProxy extends ModuleRegistration
     public function checkActivation(): bool
     {
         // Activate account
-        if (str_starts_with(Input::get('token'), 'reg-')) {
+        if (str_starts_with((string) Input::get('token'), 'reg-')) {
             $this->activateAcount();
 
             return true;

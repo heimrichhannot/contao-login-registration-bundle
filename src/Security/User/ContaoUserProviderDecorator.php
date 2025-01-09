@@ -13,10 +13,10 @@ use Contao\ModuleModel;
 use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
+use HeimrichHannot\LoginRegistrationBundle\EventListener\Contao\ParseWidgetListener;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidPasswordException;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationConfigurationException;
 use HeimrichHannot\LoginRegistrationBundle\Registration\RegistrationProxy;
-use HeimrichHannot\LoginRegistrationBundle\EventListener\Contao\ParseWidgetListener;
 use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -34,7 +34,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         private readonly ContaoFramework $framework,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly RegistrationUtils $registrationUtils,
-        private readonly ParseWidgetListener $parseWidgetListener
+        private readonly ParseWidgetListener $parseWidgetListener,
     ) {
     }
 
@@ -77,7 +77,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
 
         try {
             $user = $this->contaoUserProvider->loadUserByIdentifier($event->getUsername());
-        } catch (UserNotFoundException|UsernameNotFoundException $e) {
+        } catch (UserNotFoundException|UsernameNotFoundException) {
             return $this->applyDirectRegistration($event->getUsername());
         }
 

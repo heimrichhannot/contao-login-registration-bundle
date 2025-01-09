@@ -72,7 +72,9 @@ class LoginRegistrationModuleController extends ModuleLogin
             } elseif ($exception instanceof InvalidRegistrationException) {
                 $this->Template->message = $this->translator->trans(
                     'huh_login_registration.errors.invalid_registration',
-                    ['%error%' => $exception->getMessage()]
+                    [
+                        '%error%' => $exception->getMessage(),
+                    ]
                 );
             }
         }

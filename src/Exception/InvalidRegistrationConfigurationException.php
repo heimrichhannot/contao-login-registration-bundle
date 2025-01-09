@@ -6,5 +6,4 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class InvalidRegistrationConfigurationException extends UserNotFoundException
 {
-
 }
