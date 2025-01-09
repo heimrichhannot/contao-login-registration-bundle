@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.0-DEV] - 2025-01-08
+## [0.2.0] - 2025-01-09
 - Added: new jumpTo fields (need manual adjustments!)
 - Changed: reworked the registration and jumpTo handling
 - Changed: load bundle after member bundle
