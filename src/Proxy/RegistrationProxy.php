@@ -12,6 +12,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RegistrationProxy extends ModuleRegistration
 {
+    public const LAST_REGISTRATION = '_security.huh_login_registration.last_registration';
+
     public function __construct(
         private ModuleModel  $moduleModel,
         private EventDispatcherInterface $eventDispatcher,
@@ -29,7 +31,7 @@ class RegistrationProxy extends ModuleRegistration
 
         $event = $this->eventDispatcher->dispatch(new PrepareNewMemberDataEvent($arrData, $this->moduleModel));
 
-        if (!isset($arrData['email'])) {
+        if (!isset($event->getMemberData()['email'])) {
             throw new \Exception('No email address provided for new user!');
         }
 
@@ -60,8 +62,15 @@ class RegistrationProxy extends ModuleRegistration
         return false;
     }
 
+    public function doSendActivationMail(array $data)
+    {
+        $this->sendActivationMail($data);
+    }
+
     public static function createInstance(array $data, EventDispatcherInterface $eventDispatcher): self
     {
+        $data['jumpTo'] = $data['reg_activate_jumpTo'];
+
         $registrationModuleModel = new ModuleModel();
         $registrationModuleModel->setRow($data);
         $registrationModuleModel->type = 'registration';

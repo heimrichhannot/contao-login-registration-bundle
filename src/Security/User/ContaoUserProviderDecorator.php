@@ -3,15 +3,18 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Security\User;
 
 use Contao\Controller;
+use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\User\ContaoUserProvider;
 use Contao\FrontendTemplate;
 use Contao\Input;
+use Contao\Module;
 use Contao\ModuleModel;
 use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
+use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -27,7 +30,8 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         private ContaoUserProvider $contaoUserProvider,
         private RequestStack $requestStack,
         private ContaoFramework $framework,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private readonly RegistrationUtils $registrationUtils,
     )
     {
     }
@@ -55,6 +59,8 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
     public function loadUserByUsername(string $username): UserInterface|User
     {
         $event = $this->eventDispatcher->dispatch(new AdjustUsernameEvent($username));
+
+//        return $this->contaoUserProvider->loadUserByUsername($event->getUsername());
 
         try {
             $user = $this->contaoUserProvider->loadUserByUsername($event->getUsername());
@@ -107,6 +113,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         }
 
         Input::setPost('FORM_SUBMIT', 'tl_registration_' . $moduleModel->id);
+        Input::setPost('username', $identifier);
 
         Controller::loadLanguageFile('default');
         Controller::loadDataContainer('tl_member');
@@ -116,10 +123,20 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         $registrationModuleModel->type = 'registration';
         $registrationModuleModel->editable = ['username', 'password'];
         $registrationModuleModel->disableCaptcha = '1';
+        $registrationModuleModel->reg_activate = false;
         $registrationModule = new RegistrationProxy($registrationModuleModel, $this->eventDispatcher);
         $registrationModule->Template = new FrontendTemplate();
-        $registrationModule->runCompile();
 
-        throw $userNotFoundException;
+        try {
+            $registrationModule->runCompile();
+        } catch (ResponseException $e) {
+        }
+
+
+        $user = $this->loadUserByIdentifier($identifier);
+
+        $this->registrationUtils->setLastRegisteredUser($user);
+
+        return $user;
     }
 }
