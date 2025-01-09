@@ -9,7 +9,7 @@ class PrepareNewMemberDataEvent extends Event
 {
     public function __construct(
         private array       $memberData,
-        private ModuleModel $moduleModel,
+        private readonly ModuleModel $moduleModel,
     )
     {
     }

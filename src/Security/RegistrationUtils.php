@@ -2,13 +2,10 @@
 
 namespace HeimrichHannot\LoginRegistrationBundle\Security;
 
-use Contao\MemberModel;
 use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class RegistrationUtils
 {

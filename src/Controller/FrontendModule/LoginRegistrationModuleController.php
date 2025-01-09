@@ -2,10 +2,7 @@
 
 namespace HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule;
 
-use Contao\Controller;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
-use Contao\FrontendTemplate;
-use Contao\Input;
 use Contao\MemberModel;
 use Contao\ModuleLogin;
 use Contao\ModuleModel;

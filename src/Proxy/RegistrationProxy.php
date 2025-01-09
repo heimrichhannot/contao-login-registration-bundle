@@ -3,7 +3,6 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Proxy;
 
 use Contao\Input;
-use Contao\MemberModel;
 use Contao\ModuleModel;
 use Contao\ModuleRegistration;
 use Contao\Validator;
@@ -15,14 +14,14 @@ class RegistrationProxy extends ModuleRegistration
     public const LAST_REGISTRATION = '_security.huh_login_registration.last_registration';
 
     public function __construct(
-        private ModuleModel  $moduleModel,
-        private EventDispatcherInterface $eventDispatcher,
+        private readonly ModuleModel  $moduleModel,
+        private readonly EventDispatcherInterface $eventDispatcher,
     )
     {
         parent::__construct($moduleModel);
     }
 
-    public function createNewUser($arrData)
+    public function createNewUser($arrData): void
     {
         $arrData['username'] = Input::post('username');
         if (!isset($arrData['email']) && Validator::isEmail($arrData['username'])) {
@@ -38,14 +37,14 @@ class RegistrationProxy extends ModuleRegistration
         parent::createNewUser($event->getMemberData());
     }
 
-    public function runCompile() {
+    public function runCompile(): void {
         parent::compile();
     }
 
     public function checkActivation(): bool
     {
         // Activate account
-        if (strncmp(Input::get('token'), 'reg-', 4) === 0)
+        if (str_starts_with(Input::get('token'), 'reg-'))
         {
             $this->activateAcount();
             return true;
