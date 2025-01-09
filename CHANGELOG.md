@@ -2,8 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.4-DEV] - 2025-01-08
+## [0.2.0-DEV] - 2025-01-08
+- Added: new jumpTo fields (need manual adjustments!)
+- Changed: reworked the registration and jumpTo handling
 - Changed: load bundle after member bundle
+- Fixed: frontend module name
 
 ## [0.1.3] - 2025-01-07
 - Added: BeforeParseModuleEvent
