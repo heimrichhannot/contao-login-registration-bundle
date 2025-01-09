@@ -20,6 +20,9 @@ class Plugin implements BundlePluginInterface, ConfigPluginInterface
             BundleConfig::create(HeimrichHannotLoginRegistrationBundle::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
+                    /**
+                     * @phpstan-ignore class.notFound
+                     */
                     HeimrichHannotContaoMemberBundle::class,
                 ])
         ];

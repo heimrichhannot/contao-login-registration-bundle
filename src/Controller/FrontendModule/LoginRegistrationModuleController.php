@@ -60,7 +60,7 @@ class LoginRegistrationModuleController extends ModuleLogin
 
         $this->eventDispatcher->dispatch(new BeforeParseModuleEvent(
             $this->Template,
-            $this->getModel(),
+            $this->objModel,
             $request,
             $exception,
         ));
@@ -88,7 +88,11 @@ class LoginRegistrationModuleController extends ModuleLogin
             return;
         }
 
-        // Check whether there is a jumpTo page
+        /**
+         * Check whether there is a jumpTo page
+         *
+         * @phpstan-ignore instanceof.alwaysFalse
+         */
         if (($objJumpTo = $this->objModel->getRelated('reg_activate_jumpTo')) instanceof PageModel)
         {
             $this->jumpToOrReload($objJumpTo->row());
