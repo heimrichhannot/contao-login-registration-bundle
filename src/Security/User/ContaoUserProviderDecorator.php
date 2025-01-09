@@ -3,6 +3,7 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Security\User;
 
 use Contao\Controller;
+use Contao\CoreBundle\Exception\ResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\User\ContaoUserProvider;
 use Contao\FrontendTemplate;
@@ -12,6 +13,7 @@ use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
+use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -22,14 +24,13 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgraderInterface
 {
-
     public function __construct(
-        private ContaoUserProvider $contaoUserProvider,
-        private RequestStack $requestStack,
-        private ContaoFramework $framework,
-        private EventDispatcherInterface $eventDispatcher
-    )
-    {
+        private readonly ContaoUserProvider $contaoUserProvider,
+        private readonly RequestStack $requestStack,
+        private readonly ContaoFramework $framework,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly RegistrationUtils $registrationUtils,
+    ) {
     }
 
     public function __call(string $name, array $arguments)
@@ -58,7 +59,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
 
         try {
             $user = $this->contaoUserProvider->loadUserByUsername($event->getUsername());
-        } catch (UserNotFoundException|UsernameNotFoundException $exception) {
+        } catch (UserNotFoundException|UsernameNotFoundException) {
             return $this->applyDirectRegistration($event->getUsername());
         }
 
@@ -71,9 +72,10 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
 
         try {
             $user = $this->contaoUserProvider->loadUserByIdentifier($event->getUsername());
-        } catch (UserNotFoundException|UsernameNotFoundException $exception) {
+        } catch (UserNotFoundException|UsernameNotFoundException) {
             return $this->applyDirectRegistration($event->getUsername());
         }
+
         return $user;
     }
 
@@ -93,7 +95,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
             throw $userNotFoundException;
         }
 
-        $moduleModel = ModuleModel::findByPk((int)$moduleId);
+        $moduleModel = ModuleModel::findByPk((int) $moduleId);
         if (!$moduleModel || LoginRegistrationModuleController::TYPE !== $moduleModel->type) {
             throw $userNotFoundException;
         }
@@ -107,19 +109,26 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         }
 
         Input::setPost('FORM_SUBMIT', 'tl_registration_' . $moduleModel->id);
+        Input::setPost('username', $identifier);
 
         Controller::loadLanguageFile('default');
         Controller::loadDataContainer('tl_member');
 
-        $registrationModuleModel = new ModuleModel();
-        $registrationModuleModel->setRow($moduleModel->row());
-        $registrationModuleModel->type = 'registration';
-        $registrationModuleModel->editable = ['username', 'password'];
-        $registrationModuleModel->disableCaptcha = '1';
-        $registrationModule = new RegistrationProxy($registrationModuleModel, $this->eventDispatcher);
+        $registrationModule = RegistrationProxy::createInstance(
+            $moduleModel->row(),
+            $this->eventDispatcher
+        );
         $registrationModule->Template = new FrontendTemplate();
-        $registrationModule->runCompile();
 
-        throw $userNotFoundException;
+        try {
+            $registrationModule->runCompile();
+        } catch (ResponseException) {
+        }
+
+        $user = $this->loadUserByIdentifier($identifier);
+
+        $this->registrationUtils->setLastRegisteredUser($user);
+
+        return $user;
     }
 }

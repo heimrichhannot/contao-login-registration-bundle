@@ -13,19 +13,21 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class Plugin implements BundlePluginInterface, ConfigPluginInterface
 {
-
     public function getBundles(ParserInterface $parser): array
     {
         return [
             BundleConfig::create(HeimrichHannotLoginRegistrationBundle::class)
                 ->setLoadAfter([
                     ContaoCoreBundle::class,
+                    /*
+                     * @phpstan-ignore class.notFound
+                     */
                     HeimrichHannotContaoMemberBundle::class,
-                ])
+                ]),
         ];
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig): void
     {
         $loader->load('@HeimrichHannotLoginRegistrationBundle/config/services.yaml');
     }

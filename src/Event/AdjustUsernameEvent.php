@@ -7,9 +7,8 @@ use Symfony\Contracts\EventDispatcher\Event;
 class AdjustUsernameEvent extends Event
 {
     public function __construct(
-        private string $username
-    )
-    {
+        private string $username,
+    ) {
     }
 
     public function getUsername(): string
@@ -21,6 +20,4 @@ class AdjustUsernameEvent extends Event
     {
         $this->username = $username;
     }
-
-
 }
