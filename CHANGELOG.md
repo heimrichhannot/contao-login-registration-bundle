@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2025-01-09
+- Added: exception handling for invalid registrations
+- Added: show errors to user why registration not worked (like invalid password, configuration errors, ...)
+
 ## [0.2.0] - 2025-01-09
 - Added: new jumpTo fields (need manual adjustments!)
 - Changed: reworked the registration and jumpTo handling

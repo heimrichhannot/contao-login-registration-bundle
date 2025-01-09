@@ -2,7 +2,7 @@
 
 /** @noinspection PhpMissingParentConstructorInspection */
 
-namespace HeimrichHannot\LoginRegistrationBundle\Proxy;
+namespace HeimrichHannot\LoginRegistrationBundle\Registration;
 
 use Contao\Input;
 use Contao\ModuleModel;

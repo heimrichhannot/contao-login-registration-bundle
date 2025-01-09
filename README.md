@@ -33,3 +33,9 @@ Update the database.
 | AdjustUsernameEvent       | Manipulate the username before checking for existing user or creating a new one. |
 | PrepareNewMemberDataEvent | Adjust the new member data before the member is created.                         |
 | BeforeParseModuleEvent    | Manipulate the template data before rendering the frontend module.               |
+
+#### Exception handling
+
+To pass an exception to the user, you can throw a `\HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationException` 
+in your `PrepareNewMemberDataEvent` or `AdjustUsernameEvent` listener. 
+To adjust the message, that will be displayed to the use, use the `BeforeParseModuleEvent`.

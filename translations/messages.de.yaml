@@ -1,0 +1,5 @@
+huh_login_registration:
+  errors:
+    invalid_registration_configuration: 'Es gab einen technischen Fehler bei der Registrierung. Bitte wenden Sie sich an den Support.'
+    invalid_registration: 'Die Registrierung konnte nicht abgeschlossen werden. Fehlermeldung: %error%'
+    invalid_password: 'Ihr Password entspricht nicht den Richtlinien oder dem Standardpassword.'

@@ -8,7 +8,10 @@ use Contao\ModuleLogin;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use HeimrichHannot\LoginRegistrationBundle\Event\BeforeParseModuleEvent;
-use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
+use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidPasswordException;
+use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationConfigurationException;
+use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationException;
+use HeimrichHannot\LoginRegistrationBundle\Registration\RegistrationProxy;
 use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +19,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsFrontendModule(LoginRegistrationModuleController::TYPE, category: 'user', template: 'mod_login')]
 class LoginRegistrationModuleController extends ModuleLogin
@@ -30,6 +34,7 @@ class LoginRegistrationModuleController extends ModuleLogin
         private readonly AuthenticationUtils $authUtils,
         private readonly RequestStack $requestStack,
         private readonly RegistrationUtils $registrationUtils,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -58,6 +63,19 @@ class LoginRegistrationModuleController extends ModuleLogin
         $this->checkRegistration($exception, $registration);
 
         parent::compile();
+
+        if ($exception) {
+            if ($exception instanceof InvalidPasswordException) {
+                $this->Template->message = $this->translator->trans('huh_login_registration.errors.invalid_password');
+            } elseif ($exception instanceof InvalidRegistrationConfigurationException) {
+                $this->Template->message = $this->translator->trans('huh_login_registration.errors.invalid_registration_configuration');
+            } elseif ($exception instanceof InvalidRegistrationException) {
+                $this->Template->message = $this->translator->trans(
+                    'huh_login_registration.errors.invalid_registration',
+                    ['%error%' => $exception->getMessage()]
+                );
+            }
+        }
 
         $this->eventDispatcher->dispatch(new BeforeParseModuleEvent(
             $this->Template,

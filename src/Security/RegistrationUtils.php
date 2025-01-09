@@ -3,7 +3,7 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Security;
 
 use Contao\User;
-use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
+use HeimrichHannot\LoginRegistrationBundle\Registration\RegistrationProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 

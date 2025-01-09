@@ -1,6 +1,6 @@
 services:
   HeimrichHannot\LoginRegistrationBundle\:
-    resource: '../src/{Controller,EventListener,Proxy,Security}/*'
+    resource: '../src/{Controller,EventListener,Registration,Security}/*'
     autoconfigure: true
     autowire: true
 
