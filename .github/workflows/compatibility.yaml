@@ -1,0 +1,52 @@
+name: Compatibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.1'
+            contao: '~4.13.0'
+            symfony: '^5.4'
+          - php: '8.2'
+            contao: '~5.3.0'
+            symfony: '^6.4'
+          - php: '8.4'
+            contao: '~5.7.0'
+            symfony: '^7.4'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ctype, curl, dom, fileinfo, gd, intl, mbstring, pdo_mysql, xml, zip
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict --no-check-publish
+      - name: Install the compatibility fixture
+        shell: bash
+        run: |
+          compatibility_flags=()
+          # The historical 4.13 runtime has upstream advisories. Permit it only
+          # in this isolated, non-serving test fixture; keep audit reporting.
+          if [[ '${{ matrix.contao }}' == '~4.13.0' ]]; then
+            compatibility_flags+=(--no-security-blocking)
+          fi
+          composer update --working-dir=tests/compatibility \
+            --no-interaction --prefer-dist --no-progress \
+            "${compatibility_flags[@]}" \
+            --with='contao/core-bundle:${{ matrix.contao }}' \
+            --with='symfony/security-core:${{ matrix.symfony }}'
+      - name: Check PHP syntax
+        run: find src contao tests -path '*/vendor' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Verify the actual runtime contracts
+        run: php tests/CompatibilityTest.php tests/compatibility/vendor/autoload.php

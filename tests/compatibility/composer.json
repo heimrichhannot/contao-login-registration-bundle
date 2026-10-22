@@ -1,0 +1,29 @@
+{
+  "name": "heimrichhannot/login-registration-compatibility-tests",
+  "type": "project",
+  "description": "Isolated dependency matrix for the login registration bundle.",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "heimrichhannot/contao-login-registration-bundle": "^0.3@dev",
+    "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
+    "symfony/event-dispatcher": "^5.4 || ^6.0 || ^7.0",
+    "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
+  },
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../..",
+      "options": {
+        "symlink": true,
+        "versions": {
+          "heimrichhannot/contao-login-registration-bundle": "0.3.x-dev"
+        }
+      }
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": false
+  }
+}

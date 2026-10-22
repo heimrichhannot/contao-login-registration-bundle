@@ -3,13 +3,16 @@
   "type": "contao-bundle",
   "description": "A frontend module that allows login and registration in one module.",
   "license": "GPL-3.0-or-later",
+  "scripts": {
+    "test": "@php tests/CompatibilityTest.php"
+  },
   "require": {
     "php": "^8.1",
     "contao/core-bundle": "^4.13 || ^5.0",
     "symfony/event-dispatcher-contracts": "^1.0 || ^2.0 || ^3.0",
-    "symfony/http-foundation": "^5.4 || ^6.0",
-    "symfony/http-kernel": "^5.4 || ^6.0",
-    "symfony/security-core": "^5.4 || ^6.0",
+    "symfony/http-foundation": "^5.4 || ^6.0 || ^7.0",
+    "symfony/http-kernel": "^5.4 || ^6.0 || ^7.0",
+    "symfony/security-core": "^5.4 || ^6.0 || ^7.0",
     "symfony/translation-contracts": "^1.0 || ^2.0 || ^3.0"
   },
   "autoload": {
@@ -26,7 +29,6 @@
     "symplify/easy-coding-standard": "^12.5",
     "phpstan/phpstan": "^1.12",
     "phpstan/phpstan-symfony": "^1.4",
-    "contao/manager-plugin": "^2.13",
-    "contao/core-bundle": "^4.13"
+    "contao/manager-plugin": "^2.13"
   }
 }
