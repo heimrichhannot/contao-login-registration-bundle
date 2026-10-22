@@ -4,13 +4,14 @@
   "description": "A frontend module that allows login and registration in one module.",
   "license": "GPL-3.0-or-later",
   "require": {
-    "php": "^8.1",
-    "contao/core-bundle": "^4.13 || ^5.0",
-    "symfony/event-dispatcher-contracts": "^1.0 || ^2.0 || ^3.0",
-    "symfony/http-foundation": "^5.4 || ^6.0",
-    "symfony/http-kernel": "^5.4 || ^6.0",
-    "symfony/security-core": "^5.4 || ^6.0",
-    "symfony/translation-contracts": "^1.0 || ^2.0 || ^3.0"
+    "php": "^8.3",
+    "contao/core-bundle": "^5.7",
+    "symfony/event-dispatcher-contracts": "^3.0",
+    "symfony/http-foundation": "^7.4",
+    "symfony/http-kernel": "^7.4",
+    "symfony/security-core": "^7.4",
+    "symfony/security-http": "^7.4",
+    "symfony/translation-contracts": "^3.0"
   },
   "autoload": {
     "psr-4": {
@@ -21,12 +22,27 @@
     "contao-manager-plugin": "HeimrichHannot\\LoginRegistrationBundle\\ContaoManager\\Plugin"
   },
   "require-dev": {
-    "rector/rector": "^1.2",
+    "rector/rector": "^2.6",
     "contao/contao-rector": "dev-main",
-    "symplify/easy-coding-standard": "^12.5",
-    "phpstan/phpstan": "^1.12",
-    "phpstan/phpstan-symfony": "^1.4",
-    "contao/manager-plugin": "^2.13",
-    "contao/core-bundle": "^4.13"
+    "symplify/easy-coding-standard": "^12.6",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-symfony": "^2.0",
+    "contao/manager-plugin": "^2.13"
+  },
+  "config": {
+    "allow-plugins": {
+      "contao-components/installer": false,
+      "contao/manager-plugin": false,
+      "php-http/discovery": false
+    },
+    "platform": {
+      "php": "8.3.0"
+    }
+  },
+  "scripts": {
+    "rector": "rector process --dry-run",
+    "phpstan": "phpstan analyse --no-progress",
+    "ecs": "ecs check",
+    "test": "@php tests/run.php"
   }
 }

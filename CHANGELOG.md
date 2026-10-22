@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- Changed: require PHP 8.3, Contao 5.7 and Symfony 7.4; drop Contao 4.13 support.
+- Changed: upgrade Rector and PHPStan to version 2 and update quality configurations.
+- Fixed: Symfony 7 bundle signature and frontend user provider decoration, password upgrades and ID lookup.
+- Fixed: removed legacy login constant and updated registration model and template typing.
+
 ## [0.2.1] - 2025-01-09
 - Added: exception handling for invalid registrations
 - Added: show errors to user why registration not worked (like invalid password, configuration errors, ...)

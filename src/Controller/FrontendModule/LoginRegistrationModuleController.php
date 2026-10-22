@@ -3,6 +3,7 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
+use Contao\FrontendTemplate;
 use Contao\MemberModel;
 use Contao\ModuleLogin;
 use Contao\ModuleModel;
@@ -21,6 +22,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/** @property FrontendTemplate $Template */
 #[AsFrontendModule(LoginRegistrationModuleController::TYPE, category: 'user', template: 'mod_login')]
 class LoginRegistrationModuleController extends ModuleLogin
 {
@@ -45,7 +47,7 @@ class LoginRegistrationModuleController extends ModuleLogin
         return new Response($this->generate());
     }
 
-    protected function compile()
+    protected function compile(): void
     {
         $registration = RegistrationProxy::createInstance($this->getModel()->row(), $this->eventDispatcher);
         if ($registration->checkActivation()) {
@@ -60,7 +62,7 @@ class LoginRegistrationModuleController extends ModuleLogin
             $exception = $this->authUtils->getLastAuthenticationError(false);
         }
 
-        $this->checkRegistration($exception, $registration);
+        $this->checkRegistration($exception);
 
         parent::compile();
 
@@ -87,7 +89,7 @@ class LoginRegistrationModuleController extends ModuleLogin
         ));
     }
 
-    private function checkRegistration(?AuthenticationException $exception, RegistrationProxy $registration): void
+    private function checkRegistration(?AuthenticationException $exception): void
     {
         if (!$exception instanceof DisabledException) {
             return;
@@ -100,16 +102,12 @@ class LoginRegistrationModuleController extends ModuleLogin
         }
 
         $memberModel = MemberModel::findByUsername($lastUser->getUserIdentifier());
-        if (!$memberModel->disable) {
+        if (!$memberModel || !$memberModel->disable) {
             return;
         }
 
-        /*
-         * Check whether there is a jumpTo page
-         *
-         * @phpstan-ignore instanceof.alwaysFalse
-         */
-        if (($objJumpTo = $this->objModel->getRelated('reg_activate_jumpTo')) instanceof PageModel) {
+        // Check whether there is a jumpTo page.
+        if (($objJumpTo = PageModel::findByPk($this->objModel->row()['reg_activate_jumpTo'])) instanceof PageModel) {
             $this->jumpToOrReload($objJumpTo->row());
         }
 
