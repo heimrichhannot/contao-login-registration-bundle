@@ -3,10 +3,10 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule;
 
 use Contao\CoreBundle\DependencyInjection\Attribute\AsFrontendModule;
+use Contao\FrontendTemplate;
 use Contao\MemberModel;
 use Contao\ModuleLogin;
 use Contao\ModuleModel;
-use Contao\PageModel;
 use HeimrichHannot\LoginRegistrationBundle\Event\BeforeParseModuleEvent;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidPasswordException;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationConfigurationException;
@@ -16,11 +16,13 @@ use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/** @property FrontendTemplate $Template */
 #[AsFrontendModule(LoginRegistrationModuleController::TYPE, category: 'user', template: 'mod_login')]
 class LoginRegistrationModuleController extends ModuleLogin
 {
@@ -45,7 +47,7 @@ class LoginRegistrationModuleController extends ModuleLogin
         return new Response($this->generate());
     }
 
-    protected function compile()
+    protected function compile(): void
     {
         $registration = RegistrationProxy::createInstance($this->getModel()->row(), $this->eventDispatcher);
         if ($registration->checkActivation()) {
@@ -60,7 +62,7 @@ class LoginRegistrationModuleController extends ModuleLogin
             $exception = $this->authUtils->getLastAuthenticationError(false);
         }
 
-        $this->checkRegistration($exception, $registration);
+        $this->checkRegistration($exception);
 
         parent::compile();
 
@@ -87,32 +89,29 @@ class LoginRegistrationModuleController extends ModuleLogin
         ));
     }
 
-    private function checkRegistration(?AuthenticationException $exception, RegistrationProxy $registration): void
+    private function checkRegistration(?AuthenticationException $exception): void
     {
-        if (!$exception instanceof DisabledException) {
+        if (!$this->reg_activate || (!$exception instanceof DisabledException && !$exception instanceof BadCredentialsException)) {
             return;
         }
 
+        // Symfony may hide a DisabledException behind BadCredentialsException.
+        // After the redirect, the session no longer contains its previous exception.
+        $identifier = $exception instanceof DisabledException
+            ? $exception->getUser()?->getUserIdentifier()
+            : $this->authUtils->getLastUsername();
         $lastUser = $this->registrationUtils->getLastRegisteredUser(true);
 
-        if (!$lastUser || ($lastUser->getUserIdentifier() !== $exception->getUser()->getUserIdentifier())) {
+        if (!$lastUser || ($lastUser->getUserIdentifier() !== $identifier)) {
             return;
         }
 
         $memberModel = MemberModel::findByUsername($lastUser->getUserIdentifier());
-        if (!$memberModel->disable) {
+        if (!$memberModel || !$memberModel->disable) {
             return;
         }
 
-        /*
-         * Check whether there is a jumpTo page
-         *
-         * @phpstan-ignore instanceof.alwaysFalse
-         */
-        if (($objJumpTo = $this->objModel->getRelated('reg_activate_jumpTo')) instanceof PageModel) {
-            $this->jumpToOrReload($objJumpTo->row());
-        }
-
-        $this->reload();
+        // Redirects to the jumpTo page if it is published, otherwise reloads.
+        $this->jumpToOrReload((int) ($this->objModel->row()['reg_activate_jumpTo'] ?? 0));
     }
 }

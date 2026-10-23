@@ -19,14 +19,12 @@ use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationConfigur
 use HeimrichHannot\LoginRegistrationBundle\Registration\RegistrationProxy;
 use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
-class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgraderInterface
+class ContaoUserProviderDecorator extends ContaoUserProvider
 {
     public function __construct(
         private readonly ContaoUserProvider $contaoUserProvider,
@@ -38,17 +36,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
     ) {
     }
 
-    public function __call(string $name, array $arguments)
-    {
-        if (method_exists($this->contaoUserProvider, $name)) {
-            call_user_func([$this->contaoUserProvider, $name], ...$arguments);
-        }
-
-        $class = self::class;
-        throw new \BadMethodCallException("Method $class::$name does not exist.");
-    }
-
-    public function refreshUser(UserInterface $user): UserInterface|User
+    public function refreshUser(UserInterface $user): User
     {
         return $this->contaoUserProvider->refreshUser($user);
     }
@@ -58,17 +46,27 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         return $this->contaoUserProvider->supportsClass($class);
     }
 
-    public function loadUserByUsername(string $username): UserInterface|User
+    /**
+     * @deprecated use loadUserByIdentifier() instead
+     */
+    public function loadUserByUsername(string $username): User
     {
-        $event = $this->eventDispatcher->dispatch(new AdjustUsernameEvent($username));
+        return $this->loadUserByIdentifier($username);
+    }
 
-        try {
-            $user = $this->contaoUserProvider->loadUserByUsername($event->getUsername());
-        } catch (UserNotFoundException|UsernameNotFoundException) {
-            return $this->applyDirectRegistration($event->getUsername());
+    public function loadUserById(int $id): User
+    {
+        // Contao 5.3 does not provide this method.
+        if (!is_callable([$this->contaoUserProvider, 'loadUserById'])) {
+            throw new \BadMethodCallException(sprintf('Method %s::loadUserById() does not exist.', $this->contaoUserProvider::class));
         }
 
-        return $user;
+        return $this->contaoUserProvider->loadUserById($id);
+    }
+
+    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    {
+        $this->contaoUserProvider->upgradePassword($user, $newHashedPassword);
     }
 
     public function loadUserByIdentifier(string $identifier): User
@@ -77,7 +75,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
 
         try {
             $user = $this->contaoUserProvider->loadUserByIdentifier($event->getUsername());
-        } catch (UserNotFoundException|UsernameNotFoundException) {
+        } catch (UserNotFoundException) {
             return $this->applyDirectRegistration($event->getUsername());
         }
 
@@ -103,13 +101,7 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
             throw new InvalidRegistrationConfigurationException('No valid module found.');
         }
 
-        if (!isset($GLOBALS['objPage'])) {
-            $GLOBALS['objPage'] = $request->attributes->get('pageModel');
-        }
-
-        if (!defined('FE_USER_LOGGED_IN')) {
-            define('FE_USER_LOGGED_IN', false);
-        }
+        $GLOBALS['objPage'] ??= $request->attributes->get('pageModel');
 
         Input::setPost('FORM_SUBMIT', 'tl_registration_' . $moduleModel->id);
         Input::setPost('username', $identifier);

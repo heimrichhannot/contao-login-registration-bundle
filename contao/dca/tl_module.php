@@ -7,7 +7,7 @@ $dca = &$GLOBALS['TL_DCA']['tl_module'];
 $dca['palettes'][LoginRegistrationModuleController::TYPE] = '{title_legend},name,headline,type;'
     . '{login_legend},autologin,jumpTo,redirectBack;'
     . '{registration_legend},reg_groups,reg_allowLogin,reg_assignDir,reg_activate,reg_activate_jumpTo,reg_jumpTo;'
-    . '{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+    . '{template_legend:collapsed},customTpl;{protected_legend:collapsed},protected;{expert_legend:collapsed},guests,cssID';
 
 $dca['fields']['reg_activate_jumpTo'] = [
     'exclude' => true,

@@ -4,6 +4,7 @@
 
 namespace HeimrichHannot\LoginRegistrationBundle\Registration;
 
+use Contao\FrontendTemplate;
 use Contao\Input;
 use Contao\ModuleModel;
 use Contao\ModuleRegistration;
@@ -11,6 +12,7 @@ use Contao\Validator;
 use HeimrichHannot\LoginRegistrationBundle\Event\PrepareNewMemberDataEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/** @property FrontendTemplate $Template */
 class RegistrationProxy extends ModuleRegistration
 {
     public const LAST_REGISTRATION = '_security.huh_login_registration.last_registration';
@@ -63,7 +65,7 @@ class RegistrationProxy extends ModuleRegistration
         $registrationModuleModel->setRow($data);
         $registrationModuleModel->type = 'registration';
         $registrationModuleModel->editable = ['username', 'password'];
-        $registrationModuleModel->disableCaptcha = '1';
+        $registrationModuleModel->disableCaptcha = true;
 
         return new RegistrationProxy($registrationModuleModel, $eventDispatcher);
     }

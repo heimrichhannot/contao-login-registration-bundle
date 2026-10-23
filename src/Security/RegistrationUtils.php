@@ -6,6 +6,7 @@ use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Registration\RegistrationProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 
 class RegistrationUtils
 {
@@ -19,6 +20,9 @@ class RegistrationUtils
         $request = $this->getRequest();
 
         $request->getSession()->set(RegistrationProxy::LAST_REGISTRATION, $member);
+
+        // AdjustUsernameEvent may have changed the submitted login identifier.
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $member->getUserIdentifier());
     }
 
     public function getLastRegisteredUser(bool $clearSession = true): ?User
