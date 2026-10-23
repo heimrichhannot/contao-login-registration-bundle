@@ -16,6 +16,7 @@ use HeimrichHannot\LoginRegistrationBundle\Security\RegistrationUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -90,13 +91,18 @@ class LoginRegistrationModuleController extends ModuleLogin
 
     private function checkRegistration(?AuthenticationException $exception): void
     {
-        if (!$exception instanceof DisabledException) {
+        if (!$this->reg_activate || (!$exception instanceof DisabledException && !$exception instanceof BadCredentialsException)) {
             return;
         }
 
+        // Symfony may hide a DisabledException behind BadCredentialsException.
+        // After the redirect, the session no longer contains its previous exception.
+        $identifier = $exception instanceof DisabledException
+            ? $exception->getUser()?->getUserIdentifier()
+            : $this->authUtils->getLastUsername();
         $lastUser = $this->registrationUtils->getLastRegisteredUser(true);
 
-        if (!$lastUser || ($lastUser->getUserIdentifier() !== $exception->getUser()?->getUserIdentifier())) {
+        if (!$lastUser || ($lastUser->getUserIdentifier() !== $identifier)) {
             return;
         }
 
