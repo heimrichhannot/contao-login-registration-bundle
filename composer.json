@@ -42,7 +42,6 @@
   "scripts": {
     "rector": "rector process --dry-run",
     "phpstan": "phpstan analyse --no-progress",
-    "ecs": "ecs check",
-    "test": "@php tests/run.php"
+    "ecs": "ecs check"
   }
 }

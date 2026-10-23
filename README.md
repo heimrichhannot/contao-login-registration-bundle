@@ -8,11 +8,8 @@ This bundle provide a login frontend module allowing direct register the user if
 
 ### Requirements
 
-- PHP 8.3 or newer
-- Contao 5.3 or newer (including 5.7)
-- Symfony 6.4 or 7.x
-
-Contao 4.13 is no longer supported.
+- PHP ^8.3
+- Contao ^5.3
 
 ### Install
 

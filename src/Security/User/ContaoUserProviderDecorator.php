@@ -56,12 +56,12 @@ class ContaoUserProviderDecorator extends ContaoUserProvider
 
     public function loadUserById(int $id): User
     {
-        if (method_exists($this->contaoUserProvider, __FUNCTION__)) {
-            return $this->contaoUserProvider->loadUserById($id);
+        // Contao 5.3 does not provide this method.
+        if (!is_callable([$this->contaoUserProvider, 'loadUserById'])) {
+            throw new \BadMethodCallException(sprintf('Method %s::loadUserById() does not exist.', $this->contaoUserProvider::class));
         }
 
-        $class = self::class;
-        throw new \BadMethodCallException("Method $class::loadUserById does not exist.");
+        return $this->contaoUserProvider->loadUserById($id);
     }
 
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void

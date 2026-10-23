@@ -7,3 +7,10 @@ parameters:
   paths:
     - src
     - contao
+  ignoreErrors:
+    # loadUserById() is missing in Contao 5.3, so the runtime check is needed
+    -
+      identifier: function.alreadyNarrowedType
+      message: "#^Call to function is_callable\\(\\) with array\\{Contao\\\\CoreBundle\\\\Security\\\\User\\\\ContaoUserProvider, 'loadUserById'\\}#"
+      path: src/Security/User/ContaoUserProviderDecorator.php
+      count: 1
