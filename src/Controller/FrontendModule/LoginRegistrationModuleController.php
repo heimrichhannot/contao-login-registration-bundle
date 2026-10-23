@@ -7,7 +7,6 @@ use Contao\FrontendTemplate;
 use Contao\MemberModel;
 use Contao\ModuleLogin;
 use Contao\ModuleModel;
-use Contao\PageModel;
 use HeimrichHannot\LoginRegistrationBundle\Event\BeforeParseModuleEvent;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidPasswordException;
 use HeimrichHannot\LoginRegistrationBundle\Exception\InvalidRegistrationConfigurationException;
@@ -97,7 +96,7 @@ class LoginRegistrationModuleController extends ModuleLogin
 
         $lastUser = $this->registrationUtils->getLastRegisteredUser(true);
 
-        if (!$lastUser || ($lastUser->getUserIdentifier() !== $exception->getUser()->getUserIdentifier())) {
+        if (!$lastUser || ($lastUser->getUserIdentifier() !== $exception->getUser()?->getUserIdentifier())) {
             return;
         }
 
@@ -106,11 +105,7 @@ class LoginRegistrationModuleController extends ModuleLogin
             return;
         }
 
-        // Check whether there is a jumpTo page.
-        if (($objJumpTo = PageModel::findByPk($this->objModel->row()['reg_activate_jumpTo'])) instanceof PageModel) {
-            $this->jumpToOrReload($objJumpTo->row());
-        }
-
-        $this->reload();
+        // Redirects to the jumpTo page if it is published, otherwise reloads.
+        $this->jumpToOrReload((int) ($this->objModel->row()['reg_activate_jumpTo'] ?? 0));
     }
 }

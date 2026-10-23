@@ -11,7 +11,6 @@ return ECSConfig::configure()
     ->withPaths([
         __DIR__ . '/src',
         __DIR__ . '/contao',
-        __DIR__ . '/tests',
         __DIR__ . '/ecs.php',
         __DIR__ . '/rector.php',
     ])
