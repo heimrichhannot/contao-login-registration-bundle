@@ -36,16 +36,6 @@ class ContaoUserProviderDecorator extends ContaoUserProvider
     ) {
     }
 
-    public function __call(string $name, array $arguments): mixed
-    {
-        if (is_callable([$this->contaoUserProvider, $name])) {
-            return $this->contaoUserProvider->$name(...$arguments);
-        }
-
-        $class = self::class;
-        throw new \BadMethodCallException("Method $class::$name does not exist.");
-    }
-
     public function refreshUser(UserInterface $user): User
     {
         return $this->contaoUserProvider->refreshUser($user);
@@ -66,7 +56,12 @@ class ContaoUserProviderDecorator extends ContaoUserProvider
 
     public function loadUserById(int $id): User
     {
-        return $this->contaoUserProvider->loadUserById($id);
+        if (method_exists($this->contaoUserProvider, __FUNCTION__)) {
+            return $this->contaoUserProvider->loadUserById($id);
+        }
+
+        $class = self::class;
+        throw new \BadMethodCallException("Method $class::loadUserById does not exist.");
     }
 
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
