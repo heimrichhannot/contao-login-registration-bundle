@@ -6,6 +6,11 @@ This bundle provide a login frontend module allowing direct register the user if
 
 ## Usage
 
+### Requirements
+
+- PHP ^8.3
+- Contao ^5.3
+
 ### Install
 
 Install with contao manager or with composer: 

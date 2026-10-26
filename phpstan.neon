@@ -1,10 +1,16 @@
+includes:
+  - vendor/phpstan/phpstan-symfony/extension.neon
+
 parameters:
   level: 5
+  phpVersion: 80300
   paths:
     - src
     - contao
-#  universalObjectCratesClasses:
-#    - Contao\Model
-#    - Contao\Template
-includes:
-  - vendor/phpstan/phpstan-symfony/extension.neon
+  ignoreErrors:
+    # loadUserById() is missing in Contao 5.3, so the runtime check is needed
+    -
+      identifier: function.alreadyNarrowedType
+      message: "#^Call to function is_callable\\(\\) with array\\{Contao\\\\CoreBundle\\\\Security\\\\User\\\\ContaoUserProvider, 'loadUserById'\\}#"
+      path: src/Security/User/ContaoUserProviderDecorator.php
+      count: 1
