@@ -3,6 +3,8 @@
 namespace HeimrichHannot\LoginRegistrationBundle\Security\User;
 
 use Contao\Controller;
+use Contao\CoreBundle\Exception\AjaxRedirectResponseException;
+use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Security\User\ContaoUserProvider;
 use Contao\FrontendTemplate;
@@ -12,6 +14,7 @@ use Contao\User;
 use HeimrichHannot\LoginRegistrationBundle\Controller\FrontendModule\LoginRegistrationModuleController;
 use HeimrichHannot\LoginRegistrationBundle\Event\AdjustUsernameEvent;
 use HeimrichHannot\LoginRegistrationBundle\Proxy\RegistrationProxy;
+use HeimrichHannot\LoginRegistrationBundle\Security\Authentication\RegistrationRedirectFailureHandler;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -118,7 +121,12 @@ class ContaoUserProviderDecorator implements UserProviderInterface, PasswordUpgr
         $registrationModuleModel->disableCaptcha = '1';
         $registrationModule = new RegistrationProxy($registrationModuleModel, $this->eventDispatcher);
         $registrationModule->Template = new FrontendTemplate();
-        $registrationModule->runCompile();
+        try {
+            $registrationModule->runCompile();
+        } catch (RedirectResponseException|AjaxRedirectResponseException $redirect) {
+            $request->attributes->set(RegistrationRedirectFailureHandler::REGISTRATION_REDIRECT, $redirect);
+            throw $redirect;
+        }
 
         throw $userNotFoundException;
     }

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] 2026-11-19
+- Fixed: Preserve the redirect after successful registration instead of displaying a login error.
+
 ## [0.1.3] - 2025-01-07
 - Added: BeforeParseModuleEvent
 - Changed: require php >= 8.1

@@ -9,3 +9,7 @@ services:
     autowire: true
     bind:
       $contaoUserProvider: '@.inner'
+  HeimrichHannot\LoginRegistrationBundle\Security\Authentication\RegistrationRedirectFailureHandler:
+    decorates: 'contao.security.authentication_failure_handler'
+    decoration_on_invalid: ignore
+    arguments: ['@.inner']
